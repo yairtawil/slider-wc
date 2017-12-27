@@ -1,0 +1,22 @@
+{
+  "name": "slider-component",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --watch && webpack-dev-server --progress",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Yair Tawil",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^0.28.7",
+    "ts-loader": "^3.2.0",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
+  }
+}
