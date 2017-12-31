@@ -12,7 +12,7 @@ module.exports = {
     path: path.join(__dirname, 'dist')
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts'],
     modules: [
       path.resolve( __dirname, 'src' ),
       'node_modules'
