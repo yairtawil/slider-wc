@@ -1,89 +1,89 @@
 export class SliderComponent extends HTMLElement {
-  static selector = 'slider-component';
-  shadow: ShadowRoot;
+    static selector = 'slider-component';
+    shadow: ShadowRoot;
 
-  constructor() {
-    super();
-    this.shadow = (<any>this).createShadowRoot();
-  }
-
-  static get observedAttributes() {
-    return ['value'];
-  }
-
-  get ball(): HTMLElement {
-    return <HTMLElement> this.shadow.querySelector('#ball');
-  }
-
-  get line(): HTMLElement {
-    return <HTMLElement> this.shadow.querySelector('#line');
-  }
-
-  get text() {
-    return <HTMLElement> this.shadow.querySelector('#text');
-  }
-
-  attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
-    switch (attributeName) {
-      case 'value':
-        this.ball.style.left = `calc(${newValue}% - ${this.ball.offsetWidth * (Number(newValue) / 100)}px)`;
-        this.text.innerText = `${Math.round(newValue)}`;
-        break;
+    constructor() {
+        super();
+        this.shadow = (<any>this).createShadowRoot();
     }
-  }
 
-  calcPercent(clientX: number): number {
-    const { left, width } = this.line.getBoundingClientRect();
-    const moveTo = clientX - left;
-    const percent = (moveTo / width) * 100;
-    return Math.round(percent);
-  }
-
-  setPercent(percent: number) {
-    if (0 <= percent && percent <= 100) {
-      this.setAttribute('value', percent.toString());
+    static get observedAttributes() {
+        return ['value'];
     }
-  }
 
-  setEvents() {
-    const onMouseMove = (e: MouseEvent) => {
-      e.stopPropagation();
-      const percent = this.calcPercent(e.clientX);
-      this.setPercent(percent);
-    };
+    get ball(): HTMLElement {
+        return <HTMLElement> this.shadow.querySelector('#ball');
+    }
 
-    const onMouseUp = () => {
-      clearDocEvents();
-      this.clearBallDragStyle();
-    };
+    get line(): HTMLElement {
+        return <HTMLElement> this.shadow.querySelector('#line');
+    }
 
-    const events = [
-      { key: 'mouseup', listener: onMouseUp },
-      { key: 'mousemove', listener: onMouseMove },
-      { key: 'blur', listener: onMouseUp }
-    ];
+    get text() {
+        return <HTMLElement> this.shadow.querySelector('#text');
+    }
 
-    const setDocEvents = () => {
-      events.forEach(({ key, listener }) => document.addEventListener(key, listener));
-    };
+    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
+        switch (attributeName) {
+            case 'value':
+                this.ball.style.left = `calc(${newValue}% - ${this.ball.offsetWidth * (Number(newValue) / 100)}px)`;
+                this.text.innerText = `${Math.round(newValue)}`;
+                break;
+        }
+    }
 
-    const clearDocEvents = () => {
-      events.forEach(({ key, listener }) => document.removeEventListener(key, listener));
-    };
+    calcPercent(clientX: number): number {
+        const {left, width} = this.line.getBoundingClientRect();
+        const moveTo = clientX - left;
+        const percent = (moveTo / width) * 100;
+        return Math.round(percent);
+    }
 
-    setDocEvents();
-  }
+    setPercent(percent: number) {
+        if (0 <= percent && percent <= 100) {
+            this.setAttribute('value', percent.toString());
+        }
+    }
 
-  setBallDragStyle() {
-    this.ball.style.background = '#bcd4e8';
-  };
+    setEvents() {
+        const onMouseMove = (e: MouseEvent) => {
+            e.stopPropagation();
+            const percent = this.calcPercent(e.clientX);
+            this.setPercent(percent);
+        };
 
-  clearBallDragStyle() {
-    this.ball.style.background = '';
-  };
+        const onMouseUp = () => {
+            clearDocEvents();
+            this.clearBallDragStyle();
+        };
 
-  get template(): string {
-    return `
+        const events = [
+            {key: 'mouseup', listener: onMouseUp},
+            {key: 'mousemove', listener: onMouseMove},
+            {key: 'blur', listener: onMouseUp}
+        ];
+
+        const setDocEvents = () => {
+            events.forEach(({key, listener}) => document.addEventListener(key, listener));
+        };
+
+        const clearDocEvents = () => {
+            events.forEach(({key, listener}) => document.removeEventListener(key, listener));
+        };
+
+        setDocEvents();
+    }
+
+    setBallDragStyle() {
+        this.ball.style.background = '#bcd4e8';
+    }
+
+    clearBallDragStyle() {
+        this.ball.style.background = '';
+    }
+
+    get template(): string {
+        return `
       <style>
         :host {
           user-select: none;
@@ -125,80 +125,104 @@ export class SliderComponent extends HTMLElement {
       </style>
       <div class="slider-container">
         <div class="ball" tabindex="0" id="ball">
-          <h4 id="text">number: ${this.getAttribute('value') || 0}</h4>
+          <h4 id="text">0</h4>
         </div>
         <div class="line" id="line"></div>
       </div>
   `;
-  }
+    }
 
-  ballMouseDown() {
-    this.ball.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      if (e.which === 1) {
-        this.setEvents();
-        this.setBallDragStyle();
-      }
-    });
-  }
+    ballMouseDown() {
+        this.ball.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            if (e.which === 1) {
+                this.setEvents();
+                this.setBallDragStyle();
+            }
+        });
+    }
 
-  contextMenu() {
-    this.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
-  }
+    contextMenu() {
+        this.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
 
-  focusBlurListeners() {
-    const keydown = (e) => {
-      switch (e.which) {
-        case 37: {
-          const value: string = this.getAttribute('value');
-          const newValue: number = Number(value) - 1;
-          if (newValue <= 0 && newValue <= 100) {
-            this.setAttribute('value', `${newValue}`);
-          }
-          break;
+    setValueAttribute(value: number = 0): void {
+        value = isNaN(value) ? 0 : value;
+        if (0 <= value && value <= 100) {
+            this.setAttribute('value', `${value}`);
         }
-        case 39: {
-          const value: string = this.getAttribute('value');
-          const newValue: number = Number(value) + 1;
-          if (newValue <= 0 && newValue <= 100) {
-            this.setAttribute('value', `${newValue}`);
-          }
-          break;
-        }
-      }
-    };
-    this.
-    this.ball.addEventListener('focus', () => {
-      this.ball.addEventListener('keydown', keydown);
-    });
+    }
 
-    this.ball.addEventListener('blur', () => {
-      this.ball.removeEventListener('keydown', keydown);
-    });
+    focusBlurListeners() {
+        const increase = () => {
+            const value: string = this.getAttribute('value');
+            const newValue: number = Number(value) + 1;
+            this.setValueAttribute(newValue);
+        };
 
-  }
+        const decrease = () => {
+            const value: string = this.getAttribute('value');
+            const newValue: number = Number(value) - 1;
+            this.setValueAttribute(newValue);
+        };
 
-  lineMouseDown() {
-    const mouseDown = (e: MouseEvent) => {
-      const percent = this.calcPercent(e.clientX);
-      this.setPercent(percent);
-    };
-    this.line.addEventListener('mousedown', mouseDown);
-  }
+        const keydown = (e: KeyboardEvent) => {
+            e.preventDefault();
+            switch (e.which) {
+                case 40:
+                case 37:
+                    decrease();
+                    break;
+                case 38:
+                case 39:
+                    increase();
+                    break;
+            }
+        };
 
-  initListeners() {
-    this.contextMenu();
-    this.ballMouseDown();
-    this.focusBlurListeners();
-    this.lineMouseDown();
-  }
+        const mousewheel = (e: MouseWheelEvent) => {
+            e.preventDefault();
+            if (0 < e.deltaY) {
+                increase();
+            } else {
+                decrease();
+            }
+        };
 
-  connectedCallback() {
-    this.shadow.innerHTML = this.template;
-    this.initListeners();
-  }
+        this.ball.addEventListener('focus', () => {
+            document.addEventListener('keydown', keydown);
+            document.addEventListener('mousewheel', mousewheel);
+        });
+
+        this.ball.addEventListener('blur', () => {
+            document.removeEventListener('keydown', keydown);
+            document.removeEventListener('mousewheel', mousewheel);
+        });
+
+    }
+
+    lineMouseDown() {
+        const mouseDown = (e: MouseEvent) => {
+            const percent = this.calcPercent(e.clientX);
+            this.setPercent(percent);
+        };
+        this.line.addEventListener('mousedown', mouseDown);
+    }
+
+    initListeners() {
+        this.contextMenu();
+        this.ballMouseDown();
+        this.focusBlurListeners();
+        this.lineMouseDown();
+    }
+
+    connectedCallback() {
+        this.shadow.innerHTML = this.template;
+        this.initListeners();
+        this.setValueAttribute(Number(this.getAttribute('value')));
+    }
 
 }
