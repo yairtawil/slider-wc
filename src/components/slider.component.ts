@@ -1,11 +1,9 @@
+import * as template from './slider.component.html';
+import * as style from './slider.component.css';
+
 export class SliderComponent extends HTMLElement {
     static selector = 'slider-component';
-    shadow: ShadowRoot;
-
-    constructor() {
-        super();
-        this.shadow = (<any>this).createShadowRoot();
-    }
+    shadow: ShadowRoot = (<any>this).createShadowRoot();
 
     static get observedAttributes() {
         return ['value'];
@@ -33,7 +31,7 @@ export class SliderComponent extends HTMLElement {
     }
 
     calcPercent(clientX: number): number {
-        const {left, width} = this.line.getBoundingClientRect();
+        const { left, width } = this.line.getBoundingClientRect();
         const moveTo = clientX - left;
         const percent = (moveTo / width) * 100;
         return Math.round(percent);
@@ -58,17 +56,17 @@ export class SliderComponent extends HTMLElement {
         };
 
         const events = [
-            {key: 'mouseup', listener: onMouseUp},
-            {key: 'mousemove', listener: onMouseMove},
-            {key: 'blur', listener: onMouseUp}
+            { key: 'mouseup', listener: onMouseUp },
+            { key: 'mousemove', listener: onMouseMove },
+            { key: 'blur', listener: onMouseUp }
         ];
 
         const setDocEvents = () => {
-            events.forEach(({key, listener}) => document.addEventListener(key, listener));
+            events.forEach(({ key, listener }) => document.addEventListener(key, listener));
         };
 
         const clearDocEvents = () => {
-            events.forEach(({key, listener}) => document.removeEventListener(key, listener));
+            events.forEach(({ key, listener }) => document.removeEventListener(key, listener));
         };
 
         setDocEvents();
@@ -80,56 +78,6 @@ export class SliderComponent extends HTMLElement {
 
     clearBallDragStyle() {
         this.ball.style.background = '';
-    }
-
-    get template(): string {
-        return `
-      <style>
-        :host {
-          user-select: none;
-          cursor: pointer;
-        }
-        .slider-container {
-            width: 400px;
-            height: 30px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .ball {
-          position: relative;
-          width: 30px;
-          height: 100%;
-          background: aliceblue;
-          border-radius: 50%;
-          z-index: 1;
-          box-shadow: 0 0 1px 0 grey;
-          transform: translateX(15px);
-          outline: none;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .ball:focus {
-          box-shadow: 0 0 1px 1px grey;
-        }
-        .ball:hover{
-          box-shadow: 0 0 1px 2px grey;
-        }
-        .line {
-            background: lightblue;
-            width: 100%;
-            height: 50%;
-        }
-      </style>
-      <div class="slider-container">
-        <div class="ball" tabindex="0" id="ball">
-          <h4 id="text">0</h4>
-        </div>
-        <div class="line" id="line"></div>
-      </div>
-  `;
     }
 
     ballMouseDown() {
@@ -218,9 +166,9 @@ export class SliderComponent extends HTMLElement {
         this.focusBlurListeners();
         this.lineMouseDown();
     }
-
+    
     connectedCallback() {
-        this.shadow.innerHTML = this.template;
+        this.shadow.innerHTML = `<style>${style}</style> ${template}`;
         this.initListeners();
         this.setValueAttribute(Number(this.getAttribute('value')));
     }
