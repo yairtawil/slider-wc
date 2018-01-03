@@ -4,6 +4,8 @@ import * as style from './slider.component.css';
 export class SliderComponent extends HTMLElement {
     static selector = 'slider-component';
     shadow: ShadowRoot = (<any>this).createShadowRoot();
+    detail: { value: number } = { value: 0 };
+    event: CustomEvent = new CustomEvent('change', { bubbles: true, detail: this.detail });
 
     static get observedAttributes() {
         return ['value'];
@@ -21,11 +23,17 @@ export class SliderComponent extends HTMLElement {
         return <HTMLElement> this.shadow.querySelector('#text');
     }
 
+    get step() {
+        return Number(this.getAttribute('step') || 1);
+    }
+
     attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
         switch (attributeName) {
             case 'value':
+                this.detail.value = newValue;
                 this.ball.style.left = `calc(${newValue}% - ${this.ball.offsetWidth * (Number(newValue) / 100)}px)`;
                 this.text.innerText = `${Math.round(newValue)}`;
+                this.dispatchEvent(this.event);
                 break;
         }
     }
@@ -107,13 +115,13 @@ export class SliderComponent extends HTMLElement {
     focusBlurListeners() {
         const increase = () => {
             const value: string = this.getAttribute('value');
-            const newValue: number = Number(value) + 1;
+            const newValue: number = Number(value) + this.step;
             this.setValueAttribute(newValue);
         };
 
         const decrease = () => {
             const value: string = this.getAttribute('value');
-            const newValue: number = Number(value) - 1;
+            const newValue: number = Number(value) - this.step;
             this.setValueAttribute(newValue);
         };
 
@@ -166,11 +174,14 @@ export class SliderComponent extends HTMLElement {
         this.focusBlurListeners();
         this.lineMouseDown();
     }
-    
+
     connectedCallback() {
         this.shadow.innerHTML = `<style>${style}</style> ${template}`;
         this.initListeners();
         this.setValueAttribute(Number(this.getAttribute('value')));
+        this.addEventListener('change', (e) => {
+            console.log(e);
+        });
     }
 
 }
