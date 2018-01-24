@@ -38,6 +38,12 @@ export class SliderComponent extends HTMLElement {
     attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
         switch (attributeName) {
             case 'value':
+                if (+newValue < this.min) {
+                    newValue = this.min;
+                }
+                if (this.max < +newValue) {
+                    newValue = this.max;
+                }
                 if (!this.ball) {
                     return;
                 }
