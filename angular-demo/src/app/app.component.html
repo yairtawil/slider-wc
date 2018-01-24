@@ -1,0 +1,7 @@
+<h1> Slider-wc Angular</h1>
+
+<button (click)="value = value + 1">Increase</button>
+<button (click)="value = value - 1">Decrease</button>
+
+<slider-component [attr.value]="value" (change)="onChangeValue($event)"></slider-component>
+
