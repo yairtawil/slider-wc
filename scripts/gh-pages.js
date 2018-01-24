@@ -2,7 +2,7 @@ const fs = require('fs');
 const content = [
 	'*',
 	'!index.html',
-	'!dist/main.bundle.js'
+	'!main.bundle.js'
 	].join('\n');
 const path = './.gitignore';
 fs.writeFile(path, content, (writeErr) => {

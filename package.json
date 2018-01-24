@@ -9,12 +9,13 @@
     "build": "webpack",
     "build:watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:gh-pages": "npm run build && node scripts/gh-pages.js"
+    "build:gh-pages": "npm run build && copyfiles dist/**/* . --up 1 && node scripts/gh-pages.js"
   },
   "keywords": [],
   "author": "Yair Tawil",
   "license": "ISC",
   "devDependencies": {
+    "copyfiles": "^1.2.0",
     "css-loader": "^0.28.7",
     "html-loader": "^0.5.1",
     "ts-loader": "^3.2.0",
