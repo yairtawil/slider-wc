@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
+    "start:angular": "npm start --prefix angular-demo",
     "build": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:gh-pages": "npm run build && node scripts/gh-pages.js"
   },
   "keywords": [],
   "author": "Yair Tawil",
